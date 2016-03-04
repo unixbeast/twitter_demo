@@ -3,6 +3,7 @@ var session = require('express-session');
 var querystring = require('querystring');
 var request = require('request');
 var config = require('config');
+var twitter = require('twitter');
 var SmartThings = require('./lib/st-oauth');
 
 var app = express();
@@ -136,6 +137,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           res.send('There was error.');
         }
       });
+      res.redirect('/twitterdemo');
   });
 
   app.get('/voteblue', require_st_auth, function(req, res) {
@@ -149,6 +151,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           res.send('There was error.');
         }
       });
+      res.redirect('/twitterdemo');
   });
 
   app.get('/update-switches', require_st_auth, function(req, res) {
