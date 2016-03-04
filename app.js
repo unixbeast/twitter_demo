@@ -9,6 +9,8 @@ var app = express();
 app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
   saveUninitialized: false}));
 
+app.set('port', (process.env.PORT || 5000));
+
 var stClient = new SmartThings(config.get('OAuth.client-id'),
   config.get('OAuth.client-secret'), 'http://localhost:3000/smartthings/callback');
 
@@ -146,7 +148,10 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   });
 
   // start er up
-  app.listen(80, function() {
-    console.log('Express started on http://sttwitterdemo.herokuapp.com; press CTRL-C to ' +
-      'terminate.');
+  // app.listen(80, function() {
+  //   console.log('Express started on http://sttwitterdemo.herokuapp.com; press CTRL-C to ' +
+  //     'terminate.');
+  // });
+  app.listen(app.get('port'), function() {
+    console.log('Node app is running on port', app.get('port'));
   });
