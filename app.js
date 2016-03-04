@@ -3,7 +3,7 @@ var session = require('express-session');
 var querystring = require('querystring');
 var request = require('request');
 var config = require('config');
-var twitter = require('twitter');
+var Twitter = require('twitter');
 var SmartThings = require('./lib/st-oauth');
 
 var app = express();
