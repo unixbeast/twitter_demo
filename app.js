@@ -136,6 +136,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   twitterclient.stream('statuses/filter', {track: 'STDaveDemo red'}, function(stream) {
       stream.on('data', function(tweet) {
           console.log(tweet.text);
+          res.redirect('/votered');
       });
 
       stream.on('error', function(error) {
@@ -146,6 +147,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   twitterclient.stream('statuses/filter', {track: 'STDaveDemo blue'}, function(stream) {
       stream.on('data', function(tweet) {
           console.log(tweet.text);
+          res.redirect('/voteblue');
       });
 
       stream.on('error', function(error) {
