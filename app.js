@@ -146,7 +146,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   });
 
   // start er up
-  app.listen(3000, function() {
-    console.log('Express started on http://localhost:3000; press CTRL-C to ' +
+  app.listen(80, function() {
+    console.log('Express started on http://sttwitterdemo.herokuapp.com; press CTRL-C to ' +
       'terminate.');
   });
