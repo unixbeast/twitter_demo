@@ -12,7 +12,7 @@ app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
 app.set('port', (process.env.PORT || 5000));
 
 var stClient = new SmartThings(config.get('OAuth.client-id'),
-  config.get('OAuth.client-secret'), 'http://localhost:3000/smartthings/callback');
+  config.get('OAuth.client-secret'), 'http://sttwitterdemo.herokuapp.com/smartthings/callback');
 
   // home page
   // if no access token or base_uri exist in the current session, redirects to authorize.
@@ -62,7 +62,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
 
           // todo - store action in request and use it instead of hard-coding
           res.redirect((req.query.action && req.query.action != "") ?
-            req.query.action : "/switches");
+            req.query.action : "/twitterdemo");
         }
 
       }
@@ -116,6 +116,13 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
         res.send('Switches: ' + body);
       }
     });
+  });
+
+  // display switch status
+  // uses require_st_auth middleware to check that access token is available
+  // and valid
+  app.get('/twitterdemo', require_st_auth, function(req, res) {
+      res.send('Let\'s do some twitter stuff!');
   });
 
   app.get('/update-switches', require_st_auth, function(req, res) {
