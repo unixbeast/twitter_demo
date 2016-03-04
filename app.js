@@ -23,7 +23,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       res.redirect('/authorize');
     } else {
       console.log('token and base_uri exist, will redirect to see switches');
-      res.redirect('/switches');
+      res.redirect('/twitterdemo');
     }
   });
 
@@ -39,7 +39,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // builds SmartThigns Authorization URL and redirects user to it, where they
   // will select devices to authorize and begin the OAuth2 flow.
   app.get('/auth', function(req, res) {
-    var action =  (req.query.action && req.query.action != "")
+    var action =  (req.query.action && (req.query.action != ""))
       ? "?action="+querystring.escape(req.query.action) : "";
     console.log('action to pass along: ' + action);
     var authUrl = stClient.getAuthUrl(action);
@@ -122,7 +122,33 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // uses require_st_auth middleware to check that access token is available
   // and valid
   app.get('/twitterdemo', require_st_auth, function(req, res) {
-      res.send('Let\'s do some twitter stuff!');
+      res.send('Let\'s do some twitter stuff!<br><a href=\'/votered\'>Red</a><br><a href=\'/voteblue\'>Blue</a>');
+  });
+
+  app.get('/votered', require_st_auth, function(req, res) {
+      stClient.get({
+        token: req.session.token.access_token,
+        uri: req.session.base_uri + '/setColor/red'
+      }, function(error, resp, body) {
+        // todo - need custom errors, this is horrible
+        // error may be null from service, so doing this for now
+        if (error || resp.statusCode == 500) {
+          res.send('There was error.');
+        }
+      });
+  });
+
+  app.get('/voteblue', require_st_auth, function(req, res) {
+      stClient.get({
+        token: req.session.token.access_token,
+        uri: req.session.base_uri + '/setColor/blue'
+      }, function(error, resp, body) {
+        // todo - need custom errors, this is horrible
+        // error may be null from service, so doing this for now
+        if (error || resp.statusCode == 500) {
+          res.send('There was error.');
+        }
+      });
   });
 
   app.get('/update-switches', require_st_auth, function(req, res) {
