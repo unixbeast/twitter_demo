@@ -12,6 +12,13 @@ app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
 
 app.set('port', (process.env.PORT || 5000));
 
+var twitterclient = new Twitter({
+  consumer_key: process.env.TWITTER_CONSUMER_KEY,
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
+});
+
 var stClient = new SmartThings(config.get('OAuth.client-id'),
   config.get('OAuth.client-secret'), 'http://sttwitterdemo.herokuapp.com/smartthings/callback');
 
@@ -124,6 +131,26 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // and valid
   app.get('/twitterdemo', require_st_auth, function(req, res) {
       res.send('Let\'s do some twitter stuff!<br><a href=\'/votered\'>Red</a><br><a href=\'/voteblue\'>Blue</a>');
+  });
+
+  twitterclient.stream('statuses/filter', {track: '#red'}, function(stream) {
+      stream.on('data', function(tweet) {
+          console.log(tweet.text);
+      });
+
+      stream.on('error', function(error) {
+          throw error;
+      });
+  });
+
+  twitterclient.stream('statuses/filter', {track: '#blue'}, function(stream) {
+      stream.on('data', function(tweet) {
+          console.log(tweet.text);
+      });
+
+      stream.on('error', function(error) {
+          throw error;
+      });
   });
 
   app.get('/votered', require_st_auth, function(req, res) {
