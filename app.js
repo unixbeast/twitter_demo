@@ -7,9 +7,11 @@ var Twitter = require('twitter');
 var SmartThings = require('./lib/st-oauth');
 
 var app = express();
+
+var votes = {red: 0, blue: 0};
+
 app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
   saveUninitialized: false}));
-
 app.set('port', (process.env.PORT || 5000));
 
 var twitterclient = new Twitter({
@@ -131,29 +133,40 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // and valid
   app.get('/twitterdemo', require_st_auth, function(req, res) {
       res.send('Let\'s do some twitter stuff!<br><a href=\'/votered\'>Red</a><br><a href=\'/voteblue\'>Blue</a>');
+      twitterclient.stream('statuses/filter', {track: 'STDaveDemo red'}, function(stream) {
+          stream.on('data', function(tweet) {
+              console.log(tweet.text);
+              votes.red++;
+              handleVotes(res);
+          });
+
+          stream.on('error', function(error) {
+              throw error;
+          });
+      });
+
+      twitterclient.stream('statuses/filter', {track: 'STDaveDemo blue'}, function(stream) {
+          stream.on('data', function(tweet) {
+              console.log(tweet.text);
+              votes.blue++;
+              handleVotes(res);
+          });
+
+          stream.on('error', function(error) {
+              throw error;
+          });
+      });
   });
 
-  twitterclient.stream('statuses/filter', {track: 'STDaveDemo red'}, function(stream) {
-      stream.on('data', function(tweet) {
-          console.log(tweet.text);
+  def handleVotes = function(res) {
+      var redCount = votes.red;
+      var blueCount = votes.blue;
+      if(redCount > blueCount) {
           res.redirect('/votered');
-      });
-
-      stream.on('error', function(error) {
-          throw error;
-      });
-  });
-
-  twitterclient.stream('statuses/filter', {track: 'STDaveDemo blue'}, function(stream) {
-      stream.on('data', function(tweet) {
-          console.log(tweet.text);
+      } else {
           res.redirect('/voteblue');
-      });
-
-      stream.on('error', function(error) {
-          throw error;
-      });
-  });
+      }
+  };
 
   app.get('/votered', require_st_auth, function(req, res) {
       stClient.get({
