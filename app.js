@@ -134,7 +134,8 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   app.get('/twitterdemo', require_st_auth, function(req, res) {
       //res.send('Let\'s do some twitter stuff!<br><a href=\'/votered\'>Red</a><br><a href=\'/voteblue\'>Blue</a>');
       twitterclient.stream('statuses/filter', {track: 'STDaveDemo red'}, function(stream, res) {
-          stream.on('data', function(tweet) {
+          console.log(res);
+          stream.on('data', function(tweet, res) {
               console.log(tweet.text);
               votes.red++;
               handleVotes(res);
@@ -146,7 +147,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       });
 
       twitterclient.stream('statuses/filter', {track: 'STDaveDemo blue'}, function(stream, res) {
-          stream.on('data', function(tweet) {
+          stream.on('data', function(tweet, res) {
               console.log(tweet.text);
               votes.blue++;
               handleVotes(res);
