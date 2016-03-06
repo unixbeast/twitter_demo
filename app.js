@@ -156,34 +156,35 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       }
   };
 
+  twitterclient.stream('statuses/filter', {track: 'STDaveDemo red'}, function(stream) {
+      stream.on('data', function(tweet) {
+          console.log(tweet.text);
+          votes.red++;
+          handleVotes();
+      });
+
+      stream.on('error', function(error) {
+          throw error;
+      });
+  });
+
+  twitterclient.stream('statuses/filter', {track: 'STDaveDemo blue'}, function(stream) {
+      stream.on('data', function(tweet) {
+          console.log(tweet.text);
+          votes.blue++;
+          handleVotes();
+      });
+
+      stream.on('error', function(error) {
+          throw error;
+      });
+  });
+
   // display switch status
   // uses require_st_auth middleware to check that access token is available
   // and valid
   app.get('/twitterdemo', require_st_auth, function(req, res) {
-      //res.send('Let\'s do some twitter stuff!<br><a href=\'/votered\'>Red</a><br><a href=\'/voteblue\'>Blue</a>');
-      twitterclient.stream('statuses/filter', {track: 'STDaveDemo red'}, function(stream) {
-          stream.on('data', function(tweet) {
-              console.log(tweet.text);
-              votes.red++;
-              handleVotes();
-          });
-
-          stream.on('error', function(error) {
-              throw error;
-          });
-      });
-
-      twitterclient.stream('statuses/filter', {track: 'STDaveDemo blue'}, function(stream) {
-          stream.on('data', function(tweet) {
-              console.log(tweet.text);
-              votes.blue++;
-              handleVotes();
-          });
-
-          stream.on('error', function(error) {
-              throw error;
-          });
-      });
+      res.send('Let\'s do some twitter stuff!<br><a href=\'/votered\'>Red</a><br><a href=\'/voteblue\'>Blue</a>');
   });
 
   app.get('/votered', require_st_auth, function(req, res) {
