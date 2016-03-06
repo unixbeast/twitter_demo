@@ -160,22 +160,15 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // uses require_st_auth middleware to check that access token is available
   // and valid
   app.get('/twitterdemo', require_st_auth, function(req, res) {
-      twitterclient.stream('statuses/filter', {track: 'STDaveDemo red'}, function(stream) {
+      twitterclient.stream('statuses/filter', {track: 'STDaveDemo red,STDaveDemo blue'}, function(stream) {
           stream.on('data', function(tweet) {
               console.log(tweet.text);
-              votes.red++;
-              handleVotes(req);
-          });
-
-          stream.on('error', function(error) {
-              throw error;
-          });
-      });
-
-      twitterclient.stream('statuses/filter', {track: 'STDaveDemo blue'}, function(stream) {
-          stream.on('data', function(tweet) {
-              console.log(tweet.text);
-              votes.blue++;
+              if(tweet.text.indexOf('red') > -1) {
+                  votes.red++;
+              }
+              if(tweet.text.indexOf('blue') > -1) {
+                  votes.blue++;
+              }
               handleVotes(req);
           });
 
