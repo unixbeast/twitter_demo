@@ -133,12 +133,11 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // and valid
   app.get('/twitterdemo', require_st_auth, function(req, res) {
       //res.send('Let\'s do some twitter stuff!<br><a href=\'/votered\'>Red</a><br><a href=\'/voteblue\'>Blue</a>');
-      twitterclient.stream('statuses/filter', {track: 'STDaveDemo red'}, function(stream, res) {
-          console.log(res);
-          stream.on('data', function(tweet, res) {
+      twitterclient.stream('statuses/filter', {track: 'STDaveDemo red'}, function(stream) {
+          stream.on('data', function(tweet) {
               console.log(tweet.text);
               votes.red++;
-              handleVotes(res);
+              handleVotes();
           });
 
           stream.on('error', function(error) {
@@ -146,11 +145,11 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           });
       });
 
-      twitterclient.stream('statuses/filter', {track: 'STDaveDemo blue'}, function(stream, res) {
-          stream.on('data', function(tweet, res) {
+      twitterclient.stream('statuses/filter', {track: 'STDaveDemo blue'}, function(stream) {
+          stream.on('data', function(tweet) {
               console.log(tweet.text);
               votes.blue++;
-              handleVotes(res);
+              handleVotes();
           });
 
           stream.on('error', function(error) {
@@ -159,13 +158,31 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       });
   });
 
-  var handleVotes = function(res) {
+  var handleVotes = function() {
       var redCount = votes.red;
       var blueCount = votes.blue;
       if(redCount > blueCount) {
-          res.redirect('/votered');
+          stClient.get({
+            token: req.session.token.access_token,
+            uri: req.session.base_uri + '/setColor/red'
+          }, function(error, resp, body) {
+            // todo - need custom errors, this is horrible
+            // error may be null from service, so doing this for now
+            if (error || resp.statusCode == 500) {
+              console.log('There was error making the bulb red.');
+            }
+          });
       } else {
-          res.redirect('/voteblue');
+          stClient.get({
+            token: req.session.token.access_token,
+            uri: req.session.base_uri + '/setColor/blue'
+          }, function(error, resp, body) {
+            // todo - need custom errors, this is horrible
+            // error may be null from service, so doing this for now
+            if (error || resp.statusCode == 500) {
+              console.log('There was error making the bulb blue.');
+            }
+          });
       }
   };
 
