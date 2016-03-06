@@ -128,6 +128,34 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
     });
   });
 
+  var handleVotes = function() {
+      var redCount = votes.red;
+      var blueCount = votes.blue;
+      if(redCount > blueCount) {
+          stClient.get({
+            token: req.session.token.access_token,
+            uri: req.session.base_uri + '/setColor/red'
+          }, function(error, resp, body) {
+            // todo - need custom errors, this is horrible
+            // error may be null from service, so doing this for now
+            if (error || resp.statusCode == 500) {
+              console.log('There was error making the bulb red.');
+            }
+          });
+      } else {
+          stClient.get({
+            token: req.session.token.access_token,
+            uri: req.session.base_uri + '/setColor/blue'
+          }, function(error, resp, body) {
+            // todo - need custom errors, this is horrible
+            // error may be null from service, so doing this for now
+            if (error || resp.statusCode == 500) {
+              console.log('There was error making the bulb blue.');
+            }
+          });
+      }
+  };
+
   // display switch status
   // uses require_st_auth middleware to check that access token is available
   // and valid
@@ -157,34 +185,6 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           });
       });
   });
-
-  var handleVotes = function() {
-      var redCount = votes.red;
-      var blueCount = votes.blue;
-      if(redCount > blueCount) {
-          stClient.get({
-            token: req.session.token.access_token,
-            uri: req.session.base_uri + '/setColor/red'
-          }, function(error, resp, body) {
-            // todo - need custom errors, this is horrible
-            // error may be null from service, so doing this for now
-            if (error || resp.statusCode == 500) {
-              console.log('There was error making the bulb red.');
-            }
-          });
-      } else {
-          stClient.get({
-            token: req.session.token.access_token,
-            uri: req.session.base_uri + '/setColor/blue'
-          }, function(error, resp, body) {
-            // todo - need custom errors, this is horrible
-            // error may be null from service, so doing this for now
-            if (error || resp.statusCode == 500) {
-              console.log('There was error making the bulb blue.');
-            }
-          });
-      }
-  };
 
   app.get('/votered', require_st_auth, function(req, res) {
       stClient.get({
