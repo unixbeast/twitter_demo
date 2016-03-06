@@ -160,7 +160,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // uses require_st_auth middleware to check that access token is available
   // and valid
   app.get('/twitterdemo', require_st_auth, function(req, res) {
-      twitterclient.stream('statuses/filter', {track: 'STDaveDemo red,STDaveDemo blue'}, function(stream) {
+      twitterclient.stream('statuses/filter', {track: 'STDaveDemo'}, function(stream) {
           stream.on('data', function(tweet) {
               console.log(tweet.text);
               if(tweet.text.indexOf('red') > -1) {
