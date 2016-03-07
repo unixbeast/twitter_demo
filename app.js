@@ -44,7 +44,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       console.log('No token or base_uri exists in session, redirect to authorize');
       res.redirect('/authorize');
     } else {
-      console.log('token and base_uri exist, will redirect to see switches');
+      console.log('token and base_uri exist, will redirect to see twitterdemo');
       initTwitter(req);
       resetbulb(req);
       res.redirect('/twitterdemo');
@@ -85,6 +85,8 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           req.session.base_uri = smartAppUri;
 
           // todo - store action in request and use it instead of hard-coding
+          initTwitter(req);
+          resetbulb(req);
           res.redirect((req.query.action && req.query.action != "") ?
             req.query.action : "/twitterdemo");
         }
@@ -155,6 +157,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       stClient.post({
           token: req.session.token.access_token,
           uri: req.session.base_uri + '/setColor',
+          headers: 'Content-Type: application/json',
           params: {color: colors.white},
       }, function(error, resp, body) {
           if (error) {
