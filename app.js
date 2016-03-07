@@ -127,43 +127,57 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   var handleVotes = function(req) {
       var redCount = votes.red;
       var blueCount = votes.blue;
+      if(redCount == blueCount) {
+          resetbulb();
+      }
       if(redCount > blueCount) {
-          stClient.get({
-            token: req.session.token.access_token,
-            uri: req.session.base_uri + '/setColor/red'
-          }, function(error, resp, body) {
-            // todo - need custom errors, this is horrible
-            // error may be null from service, so doing this for now
-            if (error || resp.statusCode == 500) {
-              console.log('There was error making the bulb red.');
-            }
-          });
-      } else {
-          stClient.get({
-            token: req.session.token.access_token,
-            uri: req.session.base_uri + '/setColor/blue'
-          }, function(error, resp, body) {
-            // todo - need custom errors, this is horrible
-            // error may be null from service, so doing this for now
-            if (error || resp.statusCode == 500) {
-              console.log('There was error making the bulb blue.');
-            }
-          });
+          var difference = redCount - blueCount;
+          if(difference < 2) {
+              changeColor(req, colors.warmwhite);
+          }
+          if(difference < 4) {
+              changeColor(req, colors.lightred);
+          }
+          if(difference < 6) {
+              changeColor(req, colors.red);
+          }
+          if(difference < 11) {
+              changeColor(req, colors.darkred);
+          }
+      }
+
+      if(blueCount > redCount) {
+          var difference = blueCount - redCount;
+          if(difference < 2) {
+              changeColor(req, colors.coldwhite);
+          }
+          if(difference < 4) {
+              changeColor(req, colors.lightblue);
+          }
+          if(difference < 6) {
+              changeColor(req, colors.blue);
+          }
+          if(difference < 11) {
+              changeColor(req, colors.darkblue);
+          }
       }
   };
 
-  var resetbulb = function(req) {
-      console.log(colors.white);
+  var changeColor = function(req, color) {
       stClient.post({
           token: req.session.token.access_token,
           uri: req.session.base_uri + '/setColor',
-          params: {color: colors.white},
+          params: {color: color},
       }, function(error, resp, body) {
           if (error) {
               console.log('There was and error making the bulb white');
           }
          }
       );
+  }
+
+  var resetbulb = function(req) {
+      changeColor(req, colors.white);
   };
 
   var initTwitter = function(req) {
