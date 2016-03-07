@@ -45,6 +45,8 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       res.redirect('/authorize');
     } else {
       console.log('token and base_uri exist, will redirect to see switches');
+      initTwitter(req);
+      resetbulb(req);
       res.redirect('/twitterdemo');
     }
   });
@@ -120,26 +122,6 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
     }
   }
 
-  // display switch status
-  // uses require_st_auth middleware to check that access token is available
-  // and valid
-  app.get('/switches', require_st_auth, function(req, res) {
-    stClient.get({
-      token: req.session.token.access_token,
-      uri: req.session.base_uri + '/switches'
-    }, function(error, resp, body) {
-      // todo - need custom errors, this is horrible
-      // error may be null from service, so doing this for now
-      if (error || resp.statusCode == 500) {
-        res.send('There was error getting your configured switches.');
-      } else {
-        console.log('got switch body: ' + body);
-        res.set('Content-Type', 'application/json');
-        res.send('Switches: ' + body);
-      }
-    });
-  });
-
   var handleVotes = function(req) {
       var redCount = votes.red;
       var blueCount = votes.blue;
@@ -181,11 +163,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       );
   };
 
-  // display switch status
-  // uses require_st_auth middleware to check that access token is available
-  // and valid
-  app.get('/twitterdemo', require_st_auth, function(req, res) {
-      resetbulb(req);
+  var initTwitter = function(req) {
       twitterclient.stream('statuses/filter', {track: 'STDaveDemo'}, function(stream) {
           stream.on('data', function(tweet) {
               console.log(tweet.text);
@@ -202,6 +180,12 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
               throw error;
           });
       });
+  };
+
+  // display switch status
+  // uses require_st_auth middleware to check that access token is available
+  // and valid
+  app.get('/twitterdemo', require_st_auth, function(req, res) {
       res.send('Let\'s do some twitter stuff!<br><a href=\'/votered\'>Red</a><br><a href=\'/voteblue\'>Blue</a>');
   });
 
@@ -231,20 +215,6 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
         }
       });
       res.redirect('/twitterdemo');
-  });
-
-  app.get('/update-switches', require_st_auth, function(req, res) {
-    stClient.post({
-      token: req.session.token.access_token,
-      uri: req.session.base_uri + '/switches/on'
-    }, function(error, resp, body) {
-      if (error) {
-        res.send('There was an error updating the switches');
-      } else {
-        console.log('got response body: ' + body);
-        res.send('Result of update: ' + body);
-      }
-    });
   });
 
   // handle 404
