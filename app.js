@@ -127,6 +127,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   var handleVotes = function(req) {
       var redCount = votes.red;
       var blueCount = votes.blue;
+      console.log("RED VOTES: " + votes.red + " BLUE VOTES: " + votes.blue);
       if(redCount == blueCount) {
           resetbulb();
       }
@@ -134,14 +135,11 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           var difference = redCount - blueCount;
           if(difference < 2) {
               changeColor(req, colors.warmwhite);
-          }
-          if(difference < 4) {
+          } else if(difference < 4) {
               changeColor(req, colors.lightred);
-          }
-          if(difference < 6) {
+          } else if(difference < 6) {
               changeColor(req, colors.red);
-          }
-          if(difference < 11) {
+          } else if(difference < 11) {
               changeColor(req, colors.darkred);
           }
       }
@@ -150,14 +148,11 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           var difference = blueCount - redCount;
           if(difference < 2) {
               changeColor(req, colors.coldwhite);
-          }
-          if(difference < 4) {
+          } else if(difference < 4) {
               changeColor(req, colors.lightblue);
-          }
-          if(difference < 6) {
+          } else if(difference < 6) {
               changeColor(req, colors.blue);
-          }
-          if(difference < 11) {
+          } else if(difference < 11) {
               changeColor(req, colors.darkblue);
           }
       }
