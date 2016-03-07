@@ -157,7 +157,6 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       stClient.post({
           token: req.session.token.access_token,
           uri: req.session.base_uri + '/setColor',
-          headers: {'Content-Type' : 'application/json'},
           params: {color: colors.white},
       }, function(error, resp, body) {
           if (error) {
