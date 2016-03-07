@@ -11,15 +11,13 @@ var app = express();
 var votes = {red: 0, blue: 0};
 
 var colors = {
-    darkred : "800000",
     red : "ff0000",
-    lightred : "ff8080",
-    warmwhite : "ffcccc",
+    lightred : "ff3333",
+    warmwhite : "ff8080",
     white : "ffffff",
-    coldwhite : "ccccff",
-    lightblue : "8080ff",
+    coldwhite : "8080ff",
+    lightblue : "3333ff",
     blue : "0000ff",
-    darkblue : "000080"
 };
 
 app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
@@ -138,10 +136,8 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
               changeColor(req, colors.warmwhite);
           } else if(reddifference > 2 && reddifference < 5) {
               changeColor(req, colors.lightred);
-          } else if(reddifference > 4 && reddifference < 10) {
+          } else if(reddifference > 4) {
               changeColor(req, colors.red);
-          } else if(reddifference > 9) {
-              changeColor(req, colors.darkred);
           }
       }
 
@@ -152,10 +148,8 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
               changeColor(req, colors.coldwhite);
           } else if(bluedifference > 2 && bluedifference < 5) {
               changeColor(req, colors.lightblue);
-          } else if(bluedifference > 4 && bluedifference < 10) {
+          } else if(bluedifference > 4) {
               changeColor(req, colors.blue);
-          } else if(bluedifference > 9) {
-              changeColor(req, colors.darkblue);
           }
       }
   };
