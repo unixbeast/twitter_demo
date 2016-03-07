@@ -132,27 +132,29 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           resetbulb();
       }
       if(redCount > blueCount) {
-          var difference = redCount - blueCount;
-          if(difference > 0) {
+          var reddifference = redCount - blueCount;
+          console.log("RED DIFFERENCE: " + reddifference);
+          if(reddifference > 0) {
               changeColor(req, colors.warmwhite);
-          } else if(difference > 2) {
+          } else if(reddifference > 2) {
               changeColor(req, colors.lightred);
-          } else if(difference > 4) {
+          } else if(reddifference > 4) {
               changeColor(req, colors.red);
-          } else if(difference > 9) {
+          } else if(reddifference > 9) {
               changeColor(req, colors.darkred);
           }
       }
 
       if(blueCount > redCount) {
-          var difference = blueCount - redCount;
-          if(difference > 0) {
+          var bluedifference = blueCount - redCount;
+          console.log("BLUE DIFFERENCE: " + bluedifference);
+          if(bluedifference > 0) {
               changeColor(req, colors.coldwhite);
-          } else if(difference > 2) {
+          } else if(bluedifference > 2) {
               changeColor(req, colors.lightblue);
-          } else if(difference > 4) {
+          } else if(bluedifference > 4) {
               changeColor(req, colors.blue);
-          } else if(difference > 9) {
+          } else if(bluedifference > 9) {
               changeColor(req, colors.darkblue);
           }
       }
