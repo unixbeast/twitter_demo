@@ -11,15 +11,15 @@ var app = express();
 var votes = {red: 0, blue: 0};
 
 var colors = {
-    "darkred" : "800000",
-    "red" : "ff0000",
-    "lightred" : "ff8080",
-    "warmwhite" : "ffcccc",
-    "white" : "ffffff",
-    "coldwhite" : "ccccff",
-    "lightblue" : "8080ff",
-    "blue" : "0000ff",
-    "darkblue" : "000080"
+    darkred : "800000",
+    red : "ff0000",
+    lightred : "ff8080",
+    warmwhite : "ffcccc",
+    white : "ffffff",
+    coldwhite : "ccccff",
+    lightblue : "8080ff",
+    blue : "0000ff",
+    darkblue : "000080"
 };
 
 app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
@@ -151,6 +151,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   };
 
   var resetbulb = function(req) {
+      console.log(colors.white);
       stClient.post({
           token: req.session.token.access_token,
           uri: req.session.base_uri + '/setColor',
