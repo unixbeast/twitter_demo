@@ -168,7 +168,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       }
   };
 
-  var resetbulb = function() {
+  var resetbulb = function(req) {
       stClient.post({
         token: req.session.token.access_token,
         uri: req.session.base_uri + '/setColor',
@@ -187,7 +187,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // uses require_st_auth middleware to check that access token is available
   // and valid
   app.get('/twitterdemo', require_st_auth, function(req, res) {
-      resetbulb();
+      resetbulb(req);
       twitterclient.stream('statuses/filter', {track: 'STDaveDemo'}, function(stream) {
           stream.on('data', function(tweet) {
               console.log(tweet.text);
