@@ -133,26 +133,26 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       }
       if(redCount > blueCount) {
           var difference = redCount - blueCount;
-          if(difference < 2) {
+          if(difference > 0) {
               changeColor(req, colors.warmwhite);
-          } else if(difference < 4) {
+          } else if(difference > 2) {
               changeColor(req, colors.lightred);
-          } else if(difference < 6) {
+          } else if(difference > 4) {
               changeColor(req, colors.red);
-          } else if(difference < 11) {
+          } else if(difference > 9) {
               changeColor(req, colors.darkred);
           }
       }
 
       if(blueCount > redCount) {
           var difference = blueCount - redCount;
-          if(difference < 2) {
+          if(difference > 0) {
               changeColor(req, colors.coldwhite);
-          } else if(difference < 4) {
+          } else if(difference > 2) {
               changeColor(req, colors.lightblue);
-          } else if(difference < 6) {
+          } else if(difference > 4) {
               changeColor(req, colors.blue);
-          } else if(difference < 11) {
+          } else if(difference > 9) {
               changeColor(req, colors.darkblue);
           }
       }
