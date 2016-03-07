@@ -34,7 +34,7 @@ var twitterclient = new Twitter({
 });
 
 var stClient = new SmartThings(config.get('OAuth.client-id'),
-  config.get('OAuth.client-secret'), 'https://sttwitterdemo.herokuapp.com/smartthings/callback');
+  config.get('OAuth.client-secret'), 'http://sttwitterdemo.herokuapp.com/smartthings/callback');
 
   // home page
   // if no access token or base_uri exist in the current session, redirects to authorize.
