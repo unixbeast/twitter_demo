@@ -12,10 +12,10 @@ var votes = {red: 0, blue: 0};
 
 var colors = {
     "darkred" : "800000",
-    "red" : "FF0000",
+    "red" : "ff0000",
     "lightred" : "ff8080",
     "warmwhite" : "ffcccc",
-    "white" : "000000",
+    "white" : "ffffff",
     "coldwhite" : "ccccff",
     "lightblue" : "8080ff",
     "blue" : "0000ff",
@@ -170,17 +170,15 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
 
   var resetbulb = function(req) {
       stClient.post({
-        token: req.session.token.access_token,
-        uri: req.session.base_uri + '/setColor',
-        params: {color: colors.white},
+          token: req.session.token.access_token,
+          uri: req.session.base_uri + '/setColor',
+          params: {color: colors.white},
       }, function(error, resp, body) {
-        if (error) {
-          res.send('There was an error updating the switches');
-        } else {
-          console.log('got response body: ' + body);
-          res.send('Result of update: ' + body);
-        }
-      });
+          if (error) {
+              console.log('There was and error making the bulb white');
+          }
+         }
+      );
   };
 
   // display switch status
