@@ -172,7 +172,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       stClient.post({
         token: req.session.token.access_token,
         uri: req.session.base_uri + '/setColor',
-        params: {"color", colors.white},
+        params: {color: colors.white},
       }, function(error, resp, body) {
         if (error) {
           res.send('There was an error updating the switches');
