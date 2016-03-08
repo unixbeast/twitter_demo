@@ -49,7 +49,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           logMessage("Initializing Twitter");
           initTwitter(req, res);
       }
-      resetbulb(req, res);
+      resetbulb(req);
       res.redirect('/twitterdemo');
     }
   });
@@ -92,7 +92,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
               logMessage("Initializing Twitter");
               initTwitter(req, res);
           }
-          resetbulb(req, res);
+          resetbulb(req);
           res.redirect((req.query.action && req.query.action != "") ?
             req.query.action : "/twitterdemo");
         }
@@ -173,11 +173,13 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           }
          }
       );
-      res.redirect('/authorize');
+      if(res) {
+          res.redirect('/authorize');
+      }
   }
 
-  var resetbulb = function(req, res) {
-      changeColor(req, res, colors.white);
+  var resetbulb = function(req) {
+      changeColor(req, false, colors.white);
       votes = {red: 0, blue: 0};
   };
 
