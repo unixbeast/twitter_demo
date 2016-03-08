@@ -185,10 +185,18 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       twitterclient.stream('statuses/filter', {track: 'STDaveDemo'}, function(stream) {
           stream.on('data', function(tweet) {
               console.log("INCOMING TWEET FROM: " + tweet.user.name + "(" + tweet.user.screen_name + ") Message: " + tweet.text);
-              if(tweet.text.indexOf('red') > -1) {
+              var redTweetExp = new RegExp("(?:^|\s)(#red)(?=\s|$)");
+              var blueTweetExp = new RegExp("(?:^|\s)(#blue)(?=\s|$)")
+              if(redTweetExp.test(tweet.text)) {
                   votes.red++;
               }
-              if(tweet.text.indexOf('blue') > -1) {
+            //   if(tweet.text.indexOf('#red') > -1) {
+            //       votes.red++;
+            //   }
+            //   if(tweet.text.indexOf('blue') > -1) {
+            //       votes.blue++;
+            //   }
+              if(blueTweetExp.test(tweet.text)) {
                   votes.blue++;
               }
               handleVotes(req);
