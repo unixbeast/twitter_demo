@@ -163,6 +163,9 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   };
 
   var changeColor = function(req, res, color) {
+      if(res) {
+          res.redirect('/twitterdemo');
+      }
       stClient.post({
           token: req.session.token.access_token,
           uri: req.session.base_uri + '/setColor',
@@ -173,9 +176,6 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           }
          }
       );
-      if(res) {
-          res.redirect('/twitterdemo');
-      }
   }
 
   var resetbulb = function(req) {
