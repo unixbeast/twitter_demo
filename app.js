@@ -174,7 +174,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
          }
       );
       if(res) {
-          res.redirect('/authorize');
+          res.redirect('/twitterdemo');
       }
   }
 
