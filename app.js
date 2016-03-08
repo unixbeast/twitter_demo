@@ -185,9 +185,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       twitterclient.stream('statuses/filter', {track: 'STDaveDemo'}, function(stream) {
           stream.on('data', function(tweet) {
               console.log("INCOMING TWEET FROM: " + tweet.user.name + "(" + tweet.user.screen_name + ") Message: " + tweet.text);
-              var redTweetExp = new RegExp("(?:^|\s)(#red)(?=\s|$)");
-              var blueTweetExp = new RegExp("(?:^|\s)(#blue)(?=\s|$)")
-              if(redTweetExp.test(tweet.text)) {
+              if(tweet.text.match("(?:^|\s)(#red)(?=\s|$)")) {
                   votes.red++;
               }
             //   if(tweet.text.indexOf('#red') > -1) {
@@ -196,7 +194,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
             //   if(tweet.text.indexOf('blue') > -1) {
             //       votes.blue++;
             //   }
-              if(blueTweetExp.test(tweet.text)) {
+              if(tweet.text.match("(?:^|\s)(#blue)(?=\s|$)")) {
                   votes.blue++;
               }
               handleVotes(req);
