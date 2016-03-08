@@ -41,13 +41,13 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // otherwise redirects to the switches route
   app.get('/', function(req, res) {
     if (!req.session.token || !req.session.base_uri) {
-      console.log('No token or base_uri exists in session, redirect to authorize');
+      logMessage('No token or base_uri exists in session, redirect to authorize');
       res.redirect('/authorize');
     } else {
-      console.log('token and base_uri exist, will redirect to see twitterdemo');
+      logMessage('token and base_uri exist, will redirect to see twitterdemo');
       if(!twitterInited) {
-          console.log("Initializing Twitter");
-          initTwitter(req);
+          logMessage("Initializing Twitter");
+          initTwitter(req, res);
       }
       resetbulb(req);
       res.redirect('/twitterdemo');
@@ -58,7 +58,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   app.get('/authorize', function(req, res) {
     var action =  (req.query.action && req.query.action != "")
       ? "?action="+querystring.escape(req.query.action) : "";
-    console.log('action in authorize: ' + action);
+    logMessage('action in authorize: ' + action);
     var href="/auth" + action;
     res.send('Hello<br><a href='+href+'>Log in with SmartThings</a>');
   });
@@ -68,9 +68,9 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   app.get('/auth', function(req, res) {
     var action =  (req.query.action && (req.query.action != ""))
       ? "?action="+querystring.escape(req.query.action) : "";
-    console.log('action to pass along: ' + action);
+    logMessage('action to pass along: ' + action);
     var authUrl = stClient.getAuthUrl(action);
-    console.log('will redirect to: ' + authUrl);
+    logMessage('will redirect to: ' + authUrl);
     res.redirect(authUrl);
   });
 
@@ -82,15 +82,15 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
         if (error) {
           res.send('Error authenticating with SmartThings');
         } else {
-          console.log('tokenInfo: ' + JSON.stringify(tokenInfo));
-          console.log('endpointUri: ' + smartAppUri);
+          logMessage('tokenInfo: ' + JSON.stringify(tokenInfo));
+          logMessage('endpointUri: ' + smartAppUri);
           req.session.token = tokenInfo;
           req.session.base_uri = smartAppUri;
 
           // todo - store action in request and use it instead of hard-coding
           if(!twitterInited) {
-              console.log("Initializing Twitter");
-              initTwitter(req);
+              logMessage("Initializing Twitter");
+              initTwitter(req, res);
           }
           resetbulb(req);
           res.redirect((req.query.action && req.query.action != "") ?
@@ -106,10 +106,10 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   // valid, and redirect to authorize if not.
   function require_st_auth(req, res, next) {
     if (!req.session.token || !req.session.base_uri) {
-      console.log('token or base_uri is not in the session, redirecting to ' +
+      logMessage('token or base_uri is not in the session, redirecting to ' +
         'authorize');
       var redirectUrl = '/authorize?action='+querystring.escape(req.originalUrl);
-      console.log('will redirect to: ' + redirectUrl);
+      logMessage('will redirect to: ' + redirectUrl);
       res.redirect(redirectUrl);
       return;
     } else if (stClient.tokenNeedsRefresh(req.session.token, 0)) {
@@ -119,7 +119,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           res.redirect('/authorize');
           return;
         } else {
-          console.log('got refresh token, will continue');
+          logMessage('got refresh token, will continue');
           req.session.token = resp;
           next();
         }
@@ -130,22 +130,22 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
     }
   }
 
-  var handleVotes = function(req) {
+  var handleVotes = function(req, res) {
       var redCount = votes.red;
       var blueCount = votes.blue;
       console.log("RED VOTES: " + votes.red + " BLUE VOTES: " + votes.blue);
       if(redCount == blueCount) {
-          changeColor(req, colors.white);
+          changeColor(req, res, colors.white);
       }
       if(redCount > blueCount) {
           var reddifference = redCount - blueCount;
           console.log("RED DIFFERENCE: " + reddifference);
           if(reddifference == 1) {
-              changeColor(req, colors.warmwhite);
+              changeColor(req, res, colors.warmwhite);
           } else if(reddifference > 2 && reddifference < 5) {
-              changeColor(req, colors.lightred);
+              changeColor(req, res, colors.lightred);
           } else if(reddifference > 4) {
-              changeColor(req, colors.red);
+              changeColor(req, res, colors.red);
           }
       }
 
@@ -153,26 +153,27 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           var bluedifference = blueCount - redCount;
           console.log("BLUE DIFFERENCE: " + bluedifference);
           if(bluedifference == 1) {
-              changeColor(req, colors.coldwhite);
+              changeColor(req, res, colors.coldwhite);
           } else if(bluedifference > 2 && bluedifference < 5) {
-              changeColor(req, colors.lightblue);
+              changeColor(req, res, colors.lightblue);
           } else if(bluedifference > 4) {
-              changeColor(req, colors.blue);
+              changeColor(req, res, colors.blue);
           }
       }
   };
 
-  var changeColor = function(req, color) {
+  var changeColor = function(req, res, color) {
       stClient.post({
           token: req.session.token.access_token,
           uri: req.session.base_uri + '/setColor',
           params: {color: color},
       }, function(error, resp, body) {
           if (error) {
-              console.log('There was and error making the bulb white');
+              console.error('There was and error changing the color of the bulb: ' + error, body);
           }
          }
       );
+      res.redirect('/authorize');
   }
 
   var resetbulb = function(req) {
@@ -180,7 +181,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       votes = {red: 0, blue: 0};
   };
 
-  var initTwitter = function(req) {
+  var initTwitter = function(req, res) {
       twitterclient.stream('statuses/filter', {track: 'STDaveDemo'}, function(stream) {
           stream.on('data', function(tweet) {
               console.log(tweet.text);
@@ -190,7 +191,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
               if(tweet.text.indexOf('blue') > -1) {
                   votes.blue++;
               }
-              handleVotes(req);
+              handleVotes(req, res);
           });
 
           stream.on('error', function(error) {
@@ -250,11 +251,12 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
     res.send('500 - Server Error');
   });
 
-  // start er up
-  // app.listen(80, function() {
-  //   console.log('Express started on http://sttwitterdemo.herokuapp.com; press CTRL-C to ' +
-  //     'terminate.');
-  // });
   app.listen(app.get('port'), function() {
-    console.log('Node app is running on port', app.get('port'));
+    logMessage('Node app is running on port', app.get('port'));
   });
+
+  var logMessage = function(message) {
+      if(process.env.DEBUG) {
+          console.log(message);
+      }
+  }
