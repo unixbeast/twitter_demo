@@ -46,6 +46,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
     } else {
       console.log('token and base_uri exist, will redirect to see twitterdemo');
       if(!twitterInited) {
+          console.log("Initializing Twitter");
           initTwitter(req);
       }
       resetbulb(req);
@@ -87,7 +88,10 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           req.session.base_uri = smartAppUri;
 
           // todo - store action in request and use it instead of hard-coding
-          initTwitter(req);
+          if(!twitterInited) {
+              console.log("Initializing Twitter");
+              initTwitter(req);
+          }
           resetbulb(req);
           res.redirect((req.query.action && req.query.action != "") ?
             req.query.action : "/twitterdemo");
