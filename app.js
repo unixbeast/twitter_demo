@@ -5,6 +5,7 @@ var request = require('request');
 var config = require('config');
 var Twitter = require('twitter');
 var SmartThings = require('./lib/st-oauth');
+var http = require("http");
 
 var app = express();
 
@@ -135,17 +136,17 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       var blueCount = votes.blue;
       console.log("RED VOTES: " + votes.red + " BLUE VOTES: " + votes.blue);
       if(redCount == blueCount) {
-          changeColor(req, res, colors.white);
+          changeColor(req, colors.white);
       }
       if(redCount > blueCount) {
           var reddifference = redCount - blueCount;
           console.log("RED DIFFERENCE: " + reddifference);
           if(reddifference == 1) {
-              changeColor(req, res, colors.warmwhite);
+              changeColor(req, colors.warmwhite);
           } else if(reddifference > 2 && reddifference < 5) {
-              changeColor(req, res, colors.lightred);
+              changeColor(req, colors.lightred);
           } else if(reddifference > 4) {
-              changeColor(req, res, colors.red);
+              changeColor(req, colors.red);
           }
       }
 
@@ -153,19 +154,16 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           var bluedifference = blueCount - redCount;
           console.log("BLUE DIFFERENCE: " + bluedifference);
           if(bluedifference == 1) {
-              changeColor(req, res, colors.coldwhite);
+              changeColor(req, colors.coldwhite);
           } else if(bluedifference > 2 && bluedifference < 5) {
-              changeColor(req, res, colors.lightblue);
+              changeColor(req, colors.lightblue);
           } else if(bluedifference > 4) {
-              changeColor(req, res, colors.blue);
+              changeColor(req, colors.blue);
           }
       }
   };
 
-  var changeColor = function(req, res, color) {
-      if(res) {
-          res.redirect('/twitterdemo');
-      }
+  var changeColor = function(req, color) {
       stClient.post({
           token: req.session.token.access_token,
           uri: req.session.base_uri + '/setColor',
@@ -179,11 +177,11 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   }
 
   var resetbulb = function(req) {
-      changeColor(req, false, colors.white);
+      changeColor(req, colors.white);
       votes = {red: 0, blue: 0};
   };
 
-  var initTwitter = function(req, res) {
+  var initTwitter = function(req) {
       twitterclient.stream('statuses/filter', {track: 'STDaveDemo'}, function(stream) {
           stream.on('data', function(tweet) {
               console.log(tweet.text);
@@ -193,7 +191,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
               if(tweet.text.indexOf('blue') > -1) {
                   votes.blue++;
               }
-              handleVotes(req, res);
+              handleVotes(req);
           });
 
           stream.on('error', function(error) {
@@ -203,7 +201,6 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       twitterInited = true;
   };
 
-  // display switch status
   // uses require_st_auth middleware to check that access token is available
   // and valid
   app.get('/twitterdemo', require_st_auth, function(req, res) {
@@ -262,3 +259,8 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
           console.log(message);
       }
   }
+
+//Keep Heroku app alive
+setInterval(function() {
+    http.get("http://sttwitterdemo.herokuapp.com");
+}, 600000); // every 10 minutes (600000)
