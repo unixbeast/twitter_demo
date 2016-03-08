@@ -20,6 +20,8 @@ var colors = {
     blue : "0000ff",
 };
 
+var twitterInited = false;
+
 app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
   saveUninitialized: false}));
 app.set('port', (process.env.PORT || 5000));
@@ -43,7 +45,9 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       res.redirect('/authorize');
     } else {
       console.log('token and base_uri exist, will redirect to see twitterdemo');
-      initTwitter(req);
+      if(!twitterInited) {
+          initTwitter(req);
+      }
       resetbulb(req);
       res.redirect('/twitterdemo');
     }
@@ -188,6 +192,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
               throw error;
           });
       });
+      twitterInited = true;
   };
 
   // display switch status
