@@ -188,12 +188,6 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
               if(tweet.text.match(/\s#red\s/g)) {
                   votes.red++;
               }
-            //   if(tweet.text.indexOf('#red') > -1) {
-            //       votes.red++;
-            //   }
-            //   if(tweet.text.indexOf('blue') > -1) {
-            //       votes.blue++;
-            //   }
               if(tweet.text.match(/\s#blue\s/g)) {
                   votes.blue++;
               }
