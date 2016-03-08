@@ -184,7 +184,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   var initTwitter = function(req) {
       twitterclient.stream('statuses/filter', {track: 'STDaveDemo'}, function(stream) {
           stream.on('data', function(tweet) {
-              console.log(tweet.text);
+              console.log("INCOMING TWEET FROM: " + tweet + " Message: " + tweet.text);
               if(tweet.text.indexOf('red') > -1) {
                   votes.red++;
               }
