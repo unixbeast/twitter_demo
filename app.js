@@ -135,7 +135,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       var blueCount = votes.blue;
       console.log("RED VOTES: " + votes.red + " BLUE VOTES: " + votes.blue);
       if(redCount == blueCount) {
-          resetbulb();
+          resetbulb(req);
       }
       if(redCount > blueCount) {
           var reddifference = redCount - blueCount;
