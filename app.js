@@ -177,6 +177,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
 
   var resetbulb = function(req) {
       changeColor(req, colors.white);
+      votes = {red: 0, blue: 0};
   };
 
   var initTwitter = function(req) {
