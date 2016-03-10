@@ -260,7 +260,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
       }
   }
 
-//Keep Heroku app alive
+//Keep Heroku app awake
 setInterval(function() {
     http.get("http://sttwitterdemo.herokuapp.com");
 }, 600000); // every 10 minutes (600000)
