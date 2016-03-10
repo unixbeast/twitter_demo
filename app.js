@@ -35,7 +35,7 @@ var twitterclient = new Twitter({
 });
 
 var stClient = new SmartThings(config.get('OAuth.client-id'),
-  config.get('OAuth.client-secret'), 'http://sttwitterdemo.herokuapp.com/smartthings/callback');
+  config.get('OAuth.client-secret'), process.env.HEROKU_CALLBACK_URL);
 
   // home page
   // if no access token or base_uri exist in the current session, redirects to authorize.
@@ -182,7 +182,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   };
 
   var initTwitter = function(req) {
-      twitterclient.stream('statuses/filter', {track: 'STDaveDemo'}, function(stream) {
+      twitterclient.stream('statuses/filter', {track: process.env.TWITTER_HANDLE}, function(stream) {
           stream.on('data', function(tweet) {
               console.log("INCOMING TWEET FROM: " + tweet.user.name + "(" + tweet.user.screen_name + ") Message: " + tweet.text);
               if(tweet.text.match(/(^|\s)#red\W*(?=\s|$)/g)) {
