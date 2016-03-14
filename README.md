@@ -14,3 +14,4 @@ The node.js app is meant to be run on Heroku. The following Heroku config vars a
 * TWITTER_CONSUMER_SECRET - your twitter developers consumer secret.
 * TWITTER_HANDLE - the Twitter handle to get tweets for from the Twitter stream. (without the '@' character)
 * HEROKU_CALLBACK_URL - the url that the SmartThings OAuth service will call back to when requesting an access token.
+* DEBUG - if set to true, will turn on more verbose logging in the node.js application.
