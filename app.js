@@ -131,7 +131,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
     }
   }
 
-  var handleVotes = function(req, res) {
+  var handleVotes = function(req) {
       var redCount = votes.red;
       var blueCount = votes.blue;
       console.log("RED VOTES: " + votes.red + " BLUE VOTES: " + votes.blue);
@@ -182,23 +182,45 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   };
 
   var initTwitter = function(req) {
-      twitterclient.stream('statuses/filter', {track: process.env.TWITTER_HANDLE}, function(stream) {
-          stream.on('data', function(tweet) {
-              console.log("INCOMING TWEET FROM: " + tweet.user.name + "(" + tweet.user.screen_name + ") Message: " + tweet.text);
-              if(tweet.text.match(/(^|\s)#red\W*(?=\s|$)/g)) {
-                  votes.red++;
-              }
-              if(tweet.text.match(/(^|\s)#blue\W*(?=\s|$)/g)) {
-                  votes.blue++;
-              }
-              handleVotes(req);
-          });
+    //   twitterclient.stream('statuses/filter', {track: process.env.TWITTER_HANDLE}, function(stream) {
+    //       stream.on('data', function(tweet) {
+    //           console.log("INCOMING TWEET FROM: " + tweet.user.name + "(" + tweet.user.screen_name + ") Message: " + tweet.text);
+    //           if(tweet.text.match(/(^|\s)#red\W*(?=\s|$)/g)) {
+    //               votes.red++;
+    //           }
+    //           if(tweet.text.match(/(^|\s)#blue\W*(?=\s|$)/g)) {
+    //               votes.blue++;
+    //           }
+    //           handleVotes(req);
+    //       });
+      //
+    //       stream.on('error', function(error) {
+    //           throw error;
+    //       });
+    //   });
+    //   twitterInited = true;
+    var count = 0;
+    (function loop() {
+        var rand = Math.floor(Math.random() * 1000);
+        setTimeout(function() {
+            if(randomRedBlue == 'red') {
+                votes.red++;
+            } else {
+                votes.blue++;
+            }
+            count++;
+            handleVotes(req);
+            if(count < 1000) {
+                loop();
+            }
+        }, rand);
+    }());
 
-          stream.on('error', function(error) {
-              throw error;
-          });
-      });
-      twitterInited = true;
+
+  };
+
+  var randomRedBlue = function() {
+    return (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue';
   };
 
   // uses require_st_auth middleware to check that access token is available
