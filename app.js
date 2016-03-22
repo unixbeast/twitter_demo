@@ -203,7 +203,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
     (function loop() {
         var rand = Math.floor(Math.random() * 1000);
         setTimeout(function() {
-            if(randomRedBlue == 'red') {
+            if(randomRedBlue() == 'red') {
                 votes.red++;
             } else {
                 votes.blue++;
