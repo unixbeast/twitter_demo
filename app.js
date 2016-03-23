@@ -210,7 +210,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
             }
             count++;
             handleVotes(req);
-            if(count < 1000) {
+            if(count < 200) {
                 loop();
             }
         }, rand);
