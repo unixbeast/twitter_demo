@@ -1,7 +1,18 @@
 {
   // Customer module configs
   "OAuth": {
-    "client-id": "acfc6aa4-407e-49d0-99b9-b178344ac381",
-    "client-secret": "65cb1682-4199-47e0-bc12-9362180668bc"
+    "client-id": process.env.SMARTAPP_CLIENT_ID,
+    "client-secret": process.env.SMARTAPP_SECRET,
+    "callback-url": process.env.CALLBACK_URL
+  },
+  "Twitter": {
+      "consumer_key": process.env.TWITTER_CONSUMER_KEY,
+      "consumer_secret": process.env.TWITTER_CONSUMER_SECRET,
+      "access_token_key": process.env.TWITTER_ACCESS_TOKEN_KEY,
+      "access_token_secret": process.env.TWITTER_ACCESS_TOKEN_SECRET,
+      "handle": process.env.TWITTER_HANDLE
+  },
+  "App": {
+      "port": process.env.PORT
   }
 }

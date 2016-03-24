@@ -25,17 +25,17 @@ var twitterInited = false;
 
 app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
   saveUninitialized: false}));
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (config.get('App.port') || 5000));
 
 var twitterclient = new Twitter({
-  consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
+  consumer_key: config.get('Twitter.consumer_key'),
+  consumer_secret: config.get('Twitter.consumer_secret'),
+  access_token_key: config.get('Twitter.access_token_key'),
+  access_token_secret: config.get('Twitter.access_token_secret'),
 });
 
 var stClient = new SmartThings(config.get('OAuth.client-id'),
-  config.get('OAuth.client-secret'), process.env.HEROKU_CALLBACK_URL);
+  config.get('OAuth.client-secret'), config.get('OAuth.callback-url'));
 
   // home page
   // if no access token or base_uri exist in the current session, redirects to authorize.
@@ -182,7 +182,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   };
 
   var initTwitter = function(req) {
-    //   twitterclient.stream('statuses/filter', {track: process.env.TWITTER_HANDLE}, function(stream) {
+    //   twitterclient.stream('statuses/filter', {track: config.get('Twitter.handle')}, function(stream) {
     //       stream.on('data', function(tweet) {
     //           console.log("INCOMING TWEET FROM: " + tweet.user.name + "(" + tweet.user.screen_name + ") Message: " + tweet.text);
     //           if(tweet.text.match(/(^|\s)#red\W*(?=\s|$)/g)) {
