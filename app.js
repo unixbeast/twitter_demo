@@ -2,7 +2,7 @@ var express = require('express');
 var session = require('express-session');
 var querystring = require('querystring');
 var request = require('request');
-var config = require('config');
+var config = require('./config/config');
 var Twitter = require('twitter');
 var SmartThings = require('./lib/st-oauth');
 var http = require("http");
@@ -25,17 +25,17 @@ var twitterInited = false;
 
 app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
   saveUninitialized: false}));
-app.set('port', (config.get('App.port') || 5000));
+app.set('port', config.app.port);
 
 var twitterclient = new Twitter({
-  consumer_key: config.get('Twitter.consumer_key'),
-  consumer_secret: config.get('Twitter.consumer_secret'),
-  access_token_key: config.get('Twitter.access_token_key'),
-  access_token_secret: config.get('Twitter.access_token_secret'),
+  consumer_key: config.twitter.consumer_key,
+  consumer_secret: config.twitter.consumer_secret,
+  access_token_key: config.twitter.access_token_key,
+  access_token_secret: config.twitter.access_token_secret,
 });
 
-var stClient = new SmartThings(config.get('OAuth.client-id'),
-  config.get('OAuth.client-secret'), config.get('OAuth.callback-url'));
+var stClient = new SmartThings(config.oauth.client_id,
+  config.oauth.client_secret, config.oauth.callback_url);
 
   // home page
   // if no access token or base_uri exist in the current session, redirects to authorize.
@@ -182,7 +182,7 @@ var stClient = new SmartThings(config.get('OAuth.client-id'),
   };
 
   var initTwitter = function(req) {
-    //   twitterclient.stream('statuses/filter', {track: config.get('Twitter.handle')}, function(stream) {
+    //   twitterclient.stream('statuses/filter', {track: config.twitter.handle}, function(stream) {
     //       stream.on('data', function(tweet) {
     //           console.log("INCOMING TWEET FROM: " + tweet.user.name + "(" + tweet.user.screen_name + ") Message: " + tweet.text);
     //           if(tweet.text.match(/(^|\s)#red\W*(?=\s|$)/g)) {
