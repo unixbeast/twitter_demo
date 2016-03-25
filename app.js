@@ -145,9 +145,9 @@ var stClient = new SmartThings(config.oauth.client_id,
           console.log("RED DIFFERENCE: " + reddifference);
           if(reddifference == 1) {
               changeColor(req, colors.warmwhite);
-          } else if(reddifference > 2 && reddifference < 5) {
+          } else if(reddifference > 4 && reddifference < 10) {
               changeColor(req, colors.lightred);
-          } else if(reddifference > 4) {
+          } else if(reddifference > 9) {
               changeColor(req, colors.red);
           }
       }
@@ -157,9 +157,9 @@ var stClient = new SmartThings(config.oauth.client_id,
           console.log("BLUE DIFFERENCE: " + bluedifference);
           if(bluedifference == 1) {
               changeColor(req, colors.coldwhite);
-          } else if(bluedifference > 2 && bluedifference < 5) {
+          } else if(bluedifference > 4 && bluedifference < 10) {
               changeColor(req, colors.lightblue);
-          } else if(bluedifference > 4) {
+          } else if(bluedifference > 9) {
               changeColor(req, colors.blue);
           }
       }
