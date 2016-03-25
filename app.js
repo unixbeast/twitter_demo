@@ -143,7 +143,7 @@ var stClient = new SmartThings(config.oauth.client_id,
       if(redCount > blueCount) {
           var reddifference = redCount - blueCount;
           console.log("RED DIFFERENCE: " + reddifference);
-          if(reddifference > 1) {
+          if(reddifference > 1 && reddifference < 5) {
               changeColor(req, colors.warmwhite);
           } else if(reddifference > 4 && reddifference < 10) {
               changeColor(req, colors.lightred);
@@ -155,7 +155,7 @@ var stClient = new SmartThings(config.oauth.client_id,
       if(blueCount > redCount) {
           var bluedifference = blueCount - redCount;
           console.log("BLUE DIFFERENCE: " + bluedifference);
-          if(bluedifference > 1) {
+          if(bluedifference > 1 && bluedifference < 5) {
               changeColor(req, colors.coldwhite);
           } else if(bluedifference > 4 && bluedifference < 10) {
               changeColor(req, colors.lightblue);
@@ -166,7 +166,7 @@ var stClient = new SmartThings(config.oauth.client_id,
   };
 
   var changeColor = function(req, color) {
-      if(curColor !== color) {
+      if(curColor != color) {
           curColor = color;
           console.log("Changing color to: " + color);
           stClient.post({
