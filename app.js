@@ -21,6 +21,8 @@ var colors = {
     blue : "0000ff",
 };
 
+var curColor = colors.white;
+
 var twitterInited = false;
 
 app.use(session({secret: 'dfghlkj34h5lkjsadfkj', resave: false,
@@ -164,16 +166,19 @@ var stClient = new SmartThings(config.oauth.client_id,
   };
 
   var changeColor = function(req, color) {
-      stClient.post({
-          token: req.session.token.access_token,
-          uri: req.session.base_uri + '/setColor',
-          params: {color: color},
-      }, function(error, resp, body) {
-          if (error) {
-              console.error('There was and error changing the color of the bulb: ' + error, body);
-          }
-         }
-      );
+      if(!curColor == color) {
+          curColor = color;
+          stClient.post({
+              token: req.session.token.access_token,
+              uri: req.session.base_uri + '/setColor',
+              params: {color: color},
+          }, function(error, resp, body) {
+              if (error) {
+                  console.error('There was and error changing the color of the bulb: ' + error, body);
+              }
+             }
+          );
+      }
   }
 
   var resetbulb = function(req) {
