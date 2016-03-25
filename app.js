@@ -21,7 +21,7 @@ var colors = {
     blue : "0000ff",
 };
 
-var curColor = colors.white;
+var curColor;
 
 var twitterInited = false;
 
