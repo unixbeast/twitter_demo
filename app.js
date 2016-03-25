@@ -166,7 +166,7 @@ var stClient = new SmartThings(config.oauth.client_id,
   };
 
   var changeColor = function(req, color) {
-      if(!curColor == color) {
+      if(curColor != color) {
           curColor = color;
           stClient.post({
               token: req.session.token.access_token,
