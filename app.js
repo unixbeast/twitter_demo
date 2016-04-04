@@ -188,45 +188,23 @@ var stClient = new SmartThings(config.oauth.client_id,
   };
 
   var initTwitter = function(req) {
-    //   twitterclient.stream('statuses/filter', {track: config.twitter.handle}, function(stream) {
-    //       stream.on('data', function(tweet) {
-    //           console.log("INCOMING TWEET FROM: " + tweet.user.name + "(" + tweet.user.screen_name + ") Message: " + tweet.text);
-    //           if(tweet.text.match(/(^|\s)#red\W*(?=\s|$)/g)) {
-    //               votes.red++;
-    //           }
-    //           if(tweet.text.match(/(^|\s)#blue\W*(?=\s|$)/g)) {
-    //               votes.blue++;
-    //           }
-    //           handleVotes(req);
-    //       });
-      //
-    //       stream.on('error', function(error) {
-    //           throw error;
-    //       });
-    //   });
-    //   twitterInited = true;
-    var count = 0;
-    (function loop() {
-        var rand = Math.floor(Math.random() * 1000);
-        setTimeout(function() {
-            if(randomRedBlue() == 'red') {
-                votes.red++;
-            } else {
-                votes.blue++;
-            }
-            count++;
-            handleVotes(req);
-            if(count < 200) {
-                loop();
-            }
-        }, rand);
-    }());
+      twitterclient.stream('statuses/filter', {track: config.twitter.handle}, function(stream) {
+          stream.on('data', function(tweet) {
+              console.log("INCOMING TWEET FROM: " + tweet.user.name + "(" + tweet.user.screen_name + ") Message: " + tweet.text);
+              if(tweet.text.match(/(^|\s)#red\W*(?=\s|$)/g)) {
+                  votes.red++;
+              }
+              if(tweet.text.match(/(^|\s)#blue\W*(?=\s|$)/g)) {
+                  votes.blue++;
+              }
+              handleVotes(req);
+          });
 
-
-  };
-
-  var randomRedBlue = function() {
-    return (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue';
+          stream.on('error', function(error) {
+              throw error;
+          });
+      });
+      twitterInited = true;
   };
 
   // uses require_st_auth middleware to check that access token is available
